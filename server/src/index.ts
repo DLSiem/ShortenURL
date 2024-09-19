@@ -1,6 +1,9 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
+import urlRoutes from "./routes/urlRoutes";
+import sequelize from "./config/db";
+import dotenv from "dotenv";
 
-require("dotenv").config();
+dotenv.config();
 
 const app: Express = express();
 
@@ -8,10 +11,10 @@ const { PORT } = process.env;
 
 app.use(express.json());
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
 });
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
-});
+app.use("/", urlRoutes);

@@ -1,19 +1,17 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../config/db";
 
 interface UrlAttributes {
-  id: number;
+  id?: number;
   originalUrl: string;
   shortUrl: string;
-  clicks: number;
+  clicks?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-class Url extends Model<UrlAttributes> implements UrlAttributes {
-  public id!: number;
-  public originalUrl!: string;
-  public shortUrl!: string;
-  public clicks!: number;
-}
+interface UrlCreationAttributes extends Optional<UrlAttributes, "id"> {}
+class Url extends Model<UrlAttributes, UrlCreationAttributes> {}
 
 Url.init(
   {
@@ -34,9 +32,19 @@ Url.init(
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
   },
   {
     sequelize,
     tableName: "urls",
   }
 );
+
+export default Url;

@@ -1,7 +1,5 @@
 import { Sequelize } from "sequelize";
 
-require("dotenv").config();
-
 const { PGUSER, PGHOST, PGPASSWORD, PGDATABASE, PGPORT } = process.env;
 
 const sequelize = new Sequelize(
@@ -12,6 +10,7 @@ const sequelize = new Sequelize(
     host: PGHOST,
     port: Number(PGPORT),
     dialect: "postgres",
+    logging: false,
   }
 );
 
