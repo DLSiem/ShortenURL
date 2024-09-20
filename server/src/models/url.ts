@@ -6,8 +6,6 @@ interface UrlAttributes {
   originalUrl: string;
   shortUrl: string;
   clicks?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 interface UrlCreationAttributes extends Optional<UrlAttributes, "id"> {}
@@ -31,14 +29,6 @@ Url.init(
     clicks: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     },
   },
   {
