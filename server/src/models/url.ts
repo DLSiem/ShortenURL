@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../config/db";
 
-interface UrlAttributes {
+export interface UrlAttributes {
   id?: number;
   originalUrl: string;
   shortUrl: string;

@@ -13,9 +13,14 @@ export const createShortUrl = async (req: Request, res: Response) => {
     });
     const newShortUrl = newUrl.dataValues.shortUrl;
     console.log("New short url:", newShortUrl);
+
     res.status(201).json({
       message: "Url created successfully",
-      shortUrl: `${process.env.BASE_URL}/${newShortUrl}`,
+      data: {
+        originalUrl: newUrl.dataValues.originalUrl,
+        shortUrl: `http://localhost:3000/${newShortUrl}`,
+        clicks: newUrl.dataValues.clicks,
+      },
     });
   } catch (error) {
     console.error(error);
