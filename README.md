@@ -1,7 +1,5 @@
 # ShortenURL
 
-# ShortenURL
-
 ShortenURL is a URL shortening service that allows users to create short, easy-to-share URLs from long URLs. This project is built using Node.js, Express, TypeScript, and PostgreSQL for the backend, and React for the frontend.
 
 ## Features
