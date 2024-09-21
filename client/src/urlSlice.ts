@@ -31,7 +31,7 @@ export const createShortUrl = createAsyncThunk(
       });
       const data = await response.json();
 
-      return data;
+      return { data, ok: response.ok };
     } catch (error: unknown) {
       return { error: (error as Error).message };
     }
@@ -50,13 +50,16 @@ const urlSlice = createSlice({
     builder.addCase(createShortUrl.fulfilled, (state, action) => {
       state.loading = false;
 
-      if ("error" in action.payload) {
-        state.error = action.payload.error;
+      const { data, ok } = action.payload;
+
+      if (ok === false) {
+        state.error = data.message;
       } else {
-        state.urls = action.payload.data;
+        state.urls = data.data;
       }
     });
     builder.addCase(createShortUrl.rejected, (state) => {
+      console.log("An error occurred");
       state.loading = false;
       state.error = "An error occurred";
     });

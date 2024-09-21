@@ -1,9 +1,25 @@
 import { nanoid } from "nanoid";
 import { Request, Response } from "express";
 import Url from "../models/url";
+import { start } from "repl";
 
 export const createShortUrl = async (req: Request, res: Response) => {
   const { originalUrl } = req.body;
+
+  if (originalUrl.trim() === "") {
+    console.log("Url is required!");
+    return res.status(400).json({ message: "Url is required!" });
+  }
+
+  // check if the url is valid or not
+  const urlRegex = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/);
+  if (!urlRegex.test(originalUrl)) {
+    return res.status(400).json({ message: "Url is not valid!" });
+  }
+
+  if (originalUrl.length > 2048) {
+    return res.status(400).json({ message: "Url is too long!" });
+  }
 
   const shortUrl = nanoid(6);
   try {
@@ -12,7 +28,6 @@ export const createShortUrl = async (req: Request, res: Response) => {
       shortUrl,
     });
     const newShortUrl = newUrl.dataValues.shortUrl;
-    console.log("New short url:", newShortUrl);
 
     res.status(201).json({
       message: "Url created successfully",
@@ -29,14 +44,14 @@ export const createShortUrl = async (req: Request, res: Response) => {
 
 export const getOriginalUrl = async (req: Request, res: Response) => {
   const { shortUrl } = req.params;
-  console.log("Short url:", shortUrl);
+
   try {
     const url = await Url.findOne({ where: { shortUrl } });
     if (!url) {
       return res.status(404).json({ message: "Url not found" });
     }
     await url.increment("clicks");
-    console.log("Redirecting to:", url.dataValues.originalUrl);
+
     if (process.env.BASE_URL) {
       res.redirect(url.dataValues.originalUrl);
     } else {

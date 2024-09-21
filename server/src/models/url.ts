@@ -19,7 +19,7 @@ Url.init(
       primaryKey: true,
     },
     originalUrl: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(2048),
       allowNull: false,
     },
     shortUrl: {

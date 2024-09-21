@@ -15,6 +15,11 @@
     "esm": true
   },
 
-  "include": ["src/**/*.ts", "src/index.cts"],
+  "include": [
+    "src/**/*.ts",
+    "src/index.cts",
+    "src/migrations/migrations/20240921105658-alter-original-url-length.js",
+    "src/config/config.js"
+  ],
   "exclude": ["node_modules"]
 }

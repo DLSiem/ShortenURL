@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import { createShortUrl } from "./urlSlice";
 import { Button, Input, Alert, Tooltip } from "@material-tailwind/react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { DocumentDuplicateIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { FaCheckCircle } from "react-icons/fa";
+import { MdOutlineError } from "react-icons/md";
 
 const CreateShortUrl = () => {
   const [text, copy] = useCopyToClipboard();
   const [open, setOpen] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [originalUrl, setOriginalUrl] = useState("");
   const dispatch = useAppDispatch();
   const url = useAppSelector((state) => state.url);
+
   const { loading, error } = url;
   const { shortUrl } = url.urls || {};
 
@@ -21,6 +25,20 @@ const CreateShortUrl = () => {
     dispatch(createShortUrl(originalUrl));
     setOriginalUrl("");
   };
+
+  useEffect(() => {
+    if (error) {
+      setOpenError(true);
+      setTimeout(() => {
+        setOpenError(false);
+      }, 1000);
+    } else if (shortUrl) {
+      setOpenSuccess(true);
+      setTimeout(() => {
+        setOpenSuccess(false);
+      }, 1000);
+    }
+  }, [error, shortUrl]);
 
   const handleCopy = (url: string) => () => {
     copy(url);
@@ -38,13 +56,44 @@ const CreateShortUrl = () => {
           open={open}
           className="absolute z-10 flex w-96 border-2 gap-2 bg-gray-100 shadow-sm p-2 rounded-md"
           animate={{
-            mount: { y: 0 },
-            unmount: { y: 100 },
+            mount: { y: -10, x: 0 },
+            unmount: { y: 100, x: 30 },
+          }}
+        >
+          <div className="flex items-center">
+            <FaCheckCircle className="text-green-600 w-6 h-6" />
+            <p className="ml-2 text-gray-800 font-bold ">
+              Copied to clipboard!
+            </p>
+          </div>
+        </Alert>
+        {/* success */}
+        <Alert
+          open={openSuccess}
+          className="absolute z-10 flex w-96 border-2 gap-2 bg-gray-100 shadow-sm p-2 rounded-md"
+          animate={{
+            mount: { y: -10, x: 0 },
+            unmount: { y: 90, x: -50 },
           }}
         >
           <div className="flex items-center">
             <FaCheckCircle className="text-green-600" />
-            <p className="ml-2 text-gray-800 ">Copied to clipboard</p>
+            <p className="ml-2 text-gray-800 font-bold">Short Url created!</p>
+          </div>
+        </Alert>
+
+        {/* error */}
+        <Alert
+          open={openError}
+          className="absolute z-10 flex w-96 border-2 gap-2   bg-gray-100 shadow-sm p-2 rounded-md"
+          animate={{
+            mount: { y: -10, x: 0 },
+            unmount: { y: -10, x: 300 },
+          }}
+        >
+          <div className="flex items-center">
+            <MdOutlineError className="text-red-600 w-6 h-6" />
+            <p className="ml-2 text-red-700 font-bold ">{error}</p>
           </div>
         </Alert>
       </>
@@ -78,7 +127,6 @@ const CreateShortUrl = () => {
           {loading ? "Creating..." : "Create"}
         </Button>
       </form>
-      {error && <p className="text-red-500 mt-2">{url.error}</p>}
 
       <div className="mt-5">
         {url.urls && (
